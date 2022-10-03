@@ -19,8 +19,8 @@ def CheckArgs(Args:list):
     else:
         return True
 def PrintHelp():
-    print("Usage: python3 RainbowVision.py [input file.extension] [output file.extension] (Optional: Amount)")
-    print("Example: python3 RainbowVision.py Input.mp4 Output.mp4 50")
+    print("Usage: python3 RainbowVision.py [input file.extension] [output file.extension] (Optional: Amount) (Optional: RandomNoise (enter 0 to disable))")
+    print("Example: python3 RainbowVision.py Input.mp4 Output.mp4 50 0.02")
 def Log(Message, Level=0):
     
     Code = ""
@@ -119,6 +119,9 @@ def ProcessFrames(Frames:list, Arguments:list):
     Amount:int = 50
     if (len(Arguments) >= 3):
         Amount = int(Arguments[2])
+    RandomNoise:float = 0.01
+    if (len(Arguments) >= 4):
+        RandomNoise = float(Arguments[3])
 
     # Process Frames
     Log("Processing Frames")
@@ -127,11 +130,12 @@ def ProcessFrames(Frames:list, Arguments:list):
         Frame = Frames[FrameIndex]
 
         Frame = Frame / Amount
+        Frame = numpy.uint8(Frame)
         Frame = Frame * Amount
 
-        Frame = sp_noise(Frame, 0.01)
+        Frame = sp_noise(Frame, RandomNoise)
 
-        Frames[FrameIndex] = Frame
+        Frames[FrameIndex] = numpy.uint8(Frame)
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Processing Frames")
     return Frames
