@@ -66,7 +66,7 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     
     Log("Detecting VideoWriter Frame Properties")
 
-    VideoSize:tuple = (VideoProperties.Width, VideoProperties.Height)
+    VideoSize:tuple = (int(VideoProperties.Width), int(VideoProperties.Height))
     Log(f"Video Output Resolution Will Be {VideoSize}")
 
     Log("Setting Up VideoWriter Instance")
