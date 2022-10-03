@@ -100,7 +100,9 @@ def ProcessFrames(Frames:list, Arguments:list):
 
     # Check If Arguments Are Valid
     Log("Chekcing Arguments For Validity")
-
+    Amount:int = 50
+    if (len(Arguments) >= 3):
+        Amount = int(Arguments[2])
 
     # Process Frames
     Log("Processing Frames")
@@ -108,7 +110,7 @@ def ProcessFrames(Frames:list, Arguments:list):
     for FrameIndex in range(len(Frames)):
         Frame = Frames[FrameIndex]
 
-        
+        Frame = Trip(Frame, Amount)
 
         Frames[FrameIndex] = Frame
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
