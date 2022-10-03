@@ -52,6 +52,7 @@ def Main():
     Arguments:list = GetArgs()
     if (not CheckArgs(Arguments)):
         PrintHelp()
+        exit()
 
     LoadFrames(Arguments[0])
     
