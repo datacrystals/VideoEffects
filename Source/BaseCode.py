@@ -1,7 +1,6 @@
-from multiprocessing.dummy import Process
-from tokenize import Number
 import cv2
 import sys
+import numpy
 
 # Helper "struct"
 class FrameInfo():
@@ -110,7 +109,7 @@ def ProcessFrames(Frames:list, Arguments:list):
 
         
 
-        Frames[FrameIndex] = Frame
+        Frames[FrameIndex] = numpy.uint8(Frame)
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Processing Frames")
     return Frames
