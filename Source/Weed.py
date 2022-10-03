@@ -18,8 +18,8 @@ def CheckArgs(Args:list):
     else:
         return True
 def PrintHelp():
-    print("Usage: python3 RainbowVision.py [input file.extension] [output file.extension] (Optional: Amount) (Optional: ModAmount)")
-    print("Example: python3 RainbowVision.py Input.mp4 Output.mp4 50 20")
+    print("Usage: python3 Weed.py [input file.extension] [output file.extension] [Number of frames between update] [blur amount] [blur iterations]")
+    print("Example: python3 Weed.py in.mp4 out.mp4 8 0.03 10")
 def Log(Message, Level=0):
     
     Code = ""
@@ -94,30 +94,66 @@ def Trip(Image, Amount):
     NewImage *= (255-Amount)
     return NewImage
 
+def BlitImage(Base, Image, Position:tuple):
+
+    X,Y = Position
+    Base[X:(X+Image.shape[0]), Y:(Y+Image.shape[1])] = Image
+    return Base
+def CropImage(Image, Position:tuple, Size:tuple):
+    X,Y = Position
+    W,H = Size
+    return Image[X:X+W, Y:Y+H]
+def RadialBlur(img, blur, iterations):
+    w, h = img.shape[:2]
+
+    center_x = h / 2
+    center_y = w / 2
+
+    growMapx = numpy.tile(numpy.arange(h) + ((numpy.arange(h) - center_x)*blur), (w, 1)).astype(numpy.float32)
+    shrinkMapx = numpy.tile(numpy.arange(h) - ((numpy.arange(h) - center_x)*blur), (w, 1)).astype(numpy.float32)
+    growMapy = numpy.tile(numpy.arange(w) + ((numpy.arange(w) - center_y)*blur), (h, 1)).transpose().astype(numpy.float32)
+    shrinkMapy = numpy.tile(numpy.arange(w) - ((numpy.arange(w) - center_y)*blur), (h, 1)).transpose().astype(numpy.float32)
+
+    for i in range(iterations):
+        tmp1 = cv2.remap(img, growMapx, growMapy, cv2.INTER_LINEAR)
+        tmp2 = cv2.remap(img, shrinkMapx, shrinkMapy, cv2.INTER_LINEAR)
+        img = cv2.addWeighted(tmp1, 0.5, tmp2, 0.5, 0)
+    
+    return img
 
 # Main Processing Function
 def ProcessFrames(Frames:list, Arguments:list):
 
     # Check If Arguments Are Valid
     Log("Chekcing Arguments For Validity")
-    Amount:int = 50
-    ModAmount:int = 50
+    NumFramesBetweenUpdates:int = 8
+    BlurAmount:float = 0.04
+    Iterations:int = 10
     if (len(Arguments) >= 3):
-        Amount = int(Arguments[2])
+        NumFramesBetweenUpdates = int(Arguments[2])
     if (len(Arguments) >= 4):
-        ModAmount = int(Arguments[3])
+        BlurAmount = float(Arguments[3])
+    if (len(Arguments) >= 5):
+        Iterations = int(Arguments[4])
+        
 
     # Process Frames
     Log("Processing Frames")
     NumberFrames:int = len(Frames)
+
+    Size = (int(Frames[0].shape[0] / 2), int(Frames[0].shape[1] / 2))
+    Position = (int(Size[0]/2), int(Size[1]/2))
+
+    FreezeFrame = CropImage(Frames[0], Position, Size)
     for FrameIndex in range(len(Frames)):
         Frame = Frames[FrameIndex]
 
-        NewImage = Trip(Frame, Amount)
-        NewImage = NewImage % ModAmount
-        NewImage += (Frame - ModAmount)
+        if (FrameIndex%NumFramesBetweenUpdates == 0):
+            FreezeFrame = CropImage(Frame, Position, Size)
+        Frame = BlitImage(Frame, FreezeFrame, Position)
+        Frame = RadialBlur(Frame, BlurAmount, Iterations)
 
-        Frames[FrameIndex] = numpy.uint8(NewImage)
+        Frames[FrameIndex] = numpy.uint8(Frame)
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Processing Frames")
     return Frames
