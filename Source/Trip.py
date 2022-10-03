@@ -93,7 +93,7 @@ def Main():
 
     Frames, VideoInfo = LoadFrames(Arguments[0])
     
-
+    WriteFrames(Arguments[1], Frames, VideoInfo)
 
 
 
