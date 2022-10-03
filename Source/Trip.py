@@ -67,7 +67,7 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     Log("Detecting VideoWriter Frame Properties")
 
     Log("Setting Up VideoWriter Instance")
-    Fourcc = cv2.cv.CV_FOURCC(*'XVID')
+    Fourcc = cv2.VideoWriter_fourcc(*'MJPEG')
     Writer = cv2.VideoWriter(Path, Fourcc, VideoProperties.FPS, (VideoProperties.Width, VideoProperties.Height))
     Log("Setup VideoWriter Instance")
 
