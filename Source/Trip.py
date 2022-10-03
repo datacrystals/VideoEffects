@@ -91,6 +91,11 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
 # Main Processing Function
 def ProcessFrames(Frames:list, Arguments:list):
 
+    # Check If Arguments Are Valid
+    Log("Chekcing Arguments For Validity")
+
+
+    # Process Frames
     Log("Processing Frames")
     NumberFrames:int = len(Frames)
     for FrameIndex in range(len(Frames)):
