@@ -1,13 +1,16 @@
+from multiprocessing.dummy import Process
 from tokenize import Number
 import cv2
 import sys
 
+# Helper "struct"
 class FrameInfo():
     def __init__(self):
         self.Width:int = 0
         self.Height:int = 0
         self.FPS:float = 0
 
+# Helper Functions
 def GetArgs():
     return sys.argv[1:]
 def CheckArgs(Args:list):
@@ -61,7 +64,6 @@ def LoadFrames(Path:str):
 
     Log("Done Loading Frames")
     return Frames, FrameInfoInstance
-
 def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     
     Log("Detecting VideoWriter Frame Properties")
@@ -70,7 +72,7 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     Log(f"Video Output Resolution Will Be {VideoSize}")
 
     Log("Setting Up VideoWriter Instance")
-    Fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    Fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     Writer = cv2.VideoWriter(Path, Fourcc, 30.0, VideoSize)
     Log("Setup VideoWriter Instance")
 
@@ -80,25 +82,39 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
         Frame = Frames[FrameIndex]
 
         Writer.write(Frame)
-        Log(f"Wrote Frame [{FrameIndex}/{NumberFrames}] ({round(FrameIndex*100/NumberFrames)}%)")
+        Log(f"Wrote Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Writing Frames")
 
     Log("Releasing VideoWriter")
     Writer.release()
 
+# Main Processing Function
+def ProcessFrames(Frames:list, Arguments:list):
 
+    Log("Processing Frames")
+    NumberFrames:int = len(Frames)
+    for FrameIndex in range(len(Frames)):
+
+
+
+        Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
+    Log("Done Processing Frames")
+    return Frames
+
+# Main Function
 def Main():
 
+    # Get Arguments From The Terminal
     Arguments:list = GetArgs()
     if (not CheckArgs(Arguments)):
         PrintHelp()
         exit()
 
+    # Load The Frames, Process, Write
     Frames, VideoInfo = LoadFrames(Arguments[0])
-    
+    Frames = ProcessFrames(Frames, Arguments)
     WriteFrames(Arguments[1], Frames, VideoInfo)
 
-
-
+# If This Is The Main File, Run
 if __name__ == "__main__":
     Main()
