@@ -66,9 +66,12 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     
     Log("Detecting VideoWriter Frame Properties")
 
+    VideoSize:tuple = (VideoProperties.Width, VideoProperties.Height)
+    Log(f"Video Output Resolution Will Be {VideoSize}")
+
     Log("Setting Up VideoWriter Instance")
-    Fourcc = cv2.VideoWriter_fourcc(*'MJPEG')
-    Writer = cv2.VideoWriter(Path, Fourcc, VideoProperties.FPS, (VideoProperties.Width, VideoProperties.Height))
+    Fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    Writer = cv2.VideoWriter(Path, Fourcc, 30.0, VideoSize)
     Log("Setup VideoWriter Instance")
 
     Log("Writing Frames")
