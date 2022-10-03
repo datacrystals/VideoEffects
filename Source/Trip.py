@@ -11,7 +11,6 @@ def CheckArgs(Args:list):
         return True
 def PrintHelp():
     print("Usage: Trip.py [input file.extension] [output file.extension]")
-
 def Log(Message, Level=0):
     
     Code = ""
@@ -23,7 +22,6 @@ def Log(Message, Level=0):
         Code = "Crit"
 
     print(f"[{Code}] {Message}")
-
 def LoadFrames(Path:str):
     Log(f"Loading Video Frames From Video {Path}")
 
@@ -52,10 +50,10 @@ def LoadFrames(Path:str):
 def Main():
 
     Arguments:list = GetArgs()
-    if (not CheckArgs):
+    if (not CheckArgs(Arguments)):
         PrintHelp()
 
-    
+    LoadFrames(Arguments[0])
     
 
 
