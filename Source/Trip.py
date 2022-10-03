@@ -19,7 +19,8 @@ def CheckArgs(Args:list):
     else:
         return True
 def PrintHelp():
-    print("Usage: Trip.py [input file.extension] [output file.extension]")
+    print("Usage: Trip.py [input file.extension] [output file.extension] (Optional: Amount)")
+    print("Example: Trip.py Input.mp4 Output.mp4 50")
 def Log(Message, Level=0):
     
     Code = ""
@@ -111,6 +112,8 @@ def ProcessFrames(Frames:list, Arguments:list):
         Frame = Frames[FrameIndex]
 
         Frame = Trip(Frame, Amount)
+        NewImage = NewImage % 20
+        NewImage += (Frame - 20)
 
         Frames[FrameIndex] = Frame
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
