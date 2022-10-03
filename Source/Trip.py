@@ -111,11 +111,11 @@ def ProcessFrames(Frames:list, Arguments:list):
     for FrameIndex in range(len(Frames)):
         Frame = Frames[FrameIndex]
 
-        Frame = Trip(Frame, Amount)
+        NewImage = Trip(Frame, Amount)
         NewImage = NewImage % 20
         NewImage += (Frame - 20)
 
-        Frames[FrameIndex] = Frame
+        Frames[FrameIndex] = NewImage
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Processing Frames")
     return Frames
