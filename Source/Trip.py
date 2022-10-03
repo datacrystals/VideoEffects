@@ -88,6 +88,13 @@ def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
     Log("Releasing VideoWriter")
     Writer.release()
 
+def Trip(Image, Amount):
+    NewImage = cv2.blur(Image, (20,20))
+    NewImage = NewImage % (255-Amount)
+    NewImage *= (255-Amount)
+    return NewImage
+
+
 # Main Processing Function
 def ProcessFrames(Frames:list, Arguments:list):
 
@@ -99,9 +106,11 @@ def ProcessFrames(Frames:list, Arguments:list):
     Log("Processing Frames")
     NumberFrames:int = len(Frames)
     for FrameIndex in range(len(Frames)):
+        Frame = Frames[FrameIndex]
 
+        
 
-
+        Frames[FrameIndex] = Frame
         Log(f"Processed Frame [{FrameIndex+1}/{NumberFrames}] ({round((FrameIndex+1)*100/NumberFrames)}%)")
     Log("Done Processing Frames")
     return Frames
