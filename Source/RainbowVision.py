@@ -19,8 +19,8 @@ def CheckArgs(Args:list):
     else:
         return True
 def PrintHelp():
-    print("Usage: Trip.py [input file.extension] [output file.extension] (Optional: Amount)")
-    print("Example: Trip.py Input.mp4 Output.mp4 50")
+    print("Usage: python3 RainbowVision.py [input file.extension] [output file.extension] (Optional: Amount)")
+    print("Example: python3 RainbowVision.py Input.mp4 Output.mp4 50")
 def Log(Message, Level=0):
     
     Code = ""
