@@ -2,6 +2,12 @@ from tokenize import Number
 import cv2
 import sys
 
+class FrameInfo():
+    def __init__(self):
+        self.Width:int = 0
+        self.Height:int = 0
+        self.FPS:float = 0
+
 def GetArgs():
     return sys.argv[1:]
 def CheckArgs(Args:list):
@@ -32,6 +38,12 @@ def LoadFrames(Path:str):
     NumberFrames:int = int(Cap.get(cv2.CAP_PROP_FRAME_COUNT))
     Log(f"Detected {NumberFrames} Frames In Video")
 
+    Log("Getting Video Properties")
+    FrameInfoInstance:FrameInfo = FrameInfo()
+    FrameInfoInstance.FPS = Cap.get(cv2.CAP_PROP_FPS)
+    FrameInfoInstance.Width = Cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    FrameInfoInstance.Height = Cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
     Log("Loading Frames Into Memory For Processing")
     Frames = []
     CurrentFrame = 1
@@ -40,11 +52,36 @@ def LoadFrames(Path:str):
         Retention, Frame = Cap.read()
 
         if (Retention):
-            Log(f"Loaded Frame [{CurrentFrame}/{NumberFrames}] ({CurrentFrame*100/NumberFrames}%)")
+            Log(f"Loaded Frame [{CurrentFrame}/{NumberFrames}] ({round(CurrentFrame*100/NumberFrames)}%)")
             Frames.append(Frame)
-    
-    Log("Done Loading Frames")
+            CurrentFrame += 1
+        else:
+            Log("Done, Releasing VideoStream")
+            Cap.release()
 
+    Log("Done Loading Frames")
+    return Frames, FrameInfoInstance
+
+def WriteFrames(Path:str, Frames:list, VideoProperties:FrameInfo):
+    
+    Log("Detecting VideoWriter Frame Properties")
+
+    Log("Setting Up VideoWriter Instance")
+    Fourcc = cv2.cv.CV_FOURCC(*'XVID')
+    Writer = cv2.VideoWriter(Path, Fourcc, VideoProperties.FPS, (VideoProperties.Width, VideoProperties.Height))
+    Log("Setup VideoWriter Instance")
+
+    Log("Writing Frames")
+    NumberFrames:int = len(Frames)
+    for FrameIndex in range(NumberFrames):
+        Frame = Frames[FrameIndex]
+
+        Writer.write(Frame)
+        Log(f"Wrote Frame [{FrameIndex}/{NumberFrames}] ({round(FrameIndex*100/NumberFrames)}%)")
+    Log("Done Writing Frames")
+
+    Log("Releasing VideoWriter")
+    Writer.release()
 
 
 def Main():
@@ -54,8 +91,9 @@ def Main():
         PrintHelp()
         exit()
 
-    LoadFrames(Arguments[0])
+    Frames, VideoInfo = LoadFrames(Arguments[0])
     
+
 
 
 
