@@ -1,5 +1,5 @@
 # VideoEffects
-Just some VideoEffects that were interesting to make.
+Just some VideoEffects for a friend.
 
 ## Instructions
 To use the tools, simply run `python3 {Name of tool}.py inputvideo outputvideo (optional arguments)`
